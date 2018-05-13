@@ -94,9 +94,9 @@ public class Main extends JFrame implements ActionListener {
         startCepstrum.addActionListener(this);
 
         resultsPane = new JTextPane();
-        resultsPane.setBounds(300, 45, 300, 300);
-        getContentPane().add(resultsPane);
-
+        JScrollPane scrollPane = new JScrollPane(resultsPane);
+        scrollPane.setBounds(300, 45, 300, 300);
+        getContentPane().add(scrollPane);
     }
 
     private void initializeLogicComponents() {
@@ -112,9 +112,9 @@ public class Main extends JFrame implements ActionListener {
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 selectedFile = fileChooser.getSelectedFile();
                 originalSoundPathTextInput.setText(selectedFile.getPath());
-                reload();
             }
         } else if (e.getSource() == startAutocorrelation) {
+            reload();
             resultsPane.setText("Starting autocorrelation" + newline);
             operations.clear();
             Transformable autocorrelation = new Autocorrelation();
@@ -123,6 +123,7 @@ public class Main extends JFrame implements ActionListener {
             StringBuilder builder = operations.processSound(sourceFile);
             resultsPane.setText(resultsPane.getText() + builder.toString());
         } else if (e.getSource() == startCepstrum) {
+            reload();
             resultsPane.setText("Starting cepstrum analysis" + newline);
             operations.clear();
             Transformable cepstrum = new Cepstrum();
