@@ -10,7 +10,7 @@ public class SoundUtil {
 
     }
 
-    public static WavFile generateSound(int chunkSize, int numberOfFrames, int sampleRate, String name, List<Integer> frequencies) {
+    public static WavFile generateAndSaveSound(int chunkSize, int numberOfFrames, int sampleRate, String name, List<Integer> frequencies) {
         try {
             WavFile generatedFile = saveSound(frequencies, name, numberOfFrames, sampleRate, chunkSize);
             System.out.println("Generated sound was successfully saved");
@@ -42,6 +42,7 @@ public class SoundUtil {
 
     public static double[][] chunkArray(double[] array, int chunkSize) {
         int numOfChunks = (int) Math.ceil(array.length / chunkSize);
+
         double[][] output = new double[numOfChunks][];
 
         for (int i = 0; i < numOfChunks; ++i) {

@@ -6,38 +6,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static utils.SoundUtil.chunkArrayInt;
-import static utils.SoundUtil.generateSound;
+import static utils.SoundUtil.generateAndSaveSound;
 
 public class Autocorrelation implements Transformable {
 
     private int chunkSize = 44100;
 
     @Override
-    public WavFile process(WavFile wavFile) {
-        System.out.println("Starting autocorrelation");
+    public StringBuilder process(WavFile wavFile) {
+        StringBuilder out = new StringBuilder();
         int numberOfFrames = (int) wavFile.getNumFrames();
         int sampleRate = (int) wavFile.getSampleRate();
         int[] bufferWav = new int[numberOfFrames];
-        System.out.println("Sample rate: " + sampleRate);
-        System.out.println("Number of frames: " + numberOfFrames);
-        System.out.println("Chunk size: " + chunkSize);
+
+        out.append("Signal length - ").append(numberOfFrames).append(newline);
+        out.append("Sample rate - ").append(sampleRate).append(newline);
+        out.append("Frames size - ").append(chunkSize).append(newline);
+
         String name = wavFile.getName();
         try {
             wavFile.readFrames(bufferWav, numberOfFrames);
             wavFile.close();
         } catch (Exception e) {
-            System.out.println("===ERROR===");
+            System.err.println("===ERROR===");
             System.out.println("Unexpected error has occurred when reading frames from sound");
             e.printStackTrace();
-            System.out.println("===ERROR===");
+            System.err.println("===ERROR===");
         }
 
         int[][] parts = chunkArrayInt(bufferWav, chunkSize);
 
         List<Integer> frequencies = new ArrayList<>();
 
-        for (int[] buffer : parts) {
+        out.append("Frames count - ").append(parts.length).append(newline).append(newline);
 
+        int counter = 0;
+        for (int[] buffer : parts) {
             long[] autocorrelation = new long[chunkSize];
 
             for (int m = 1; m < autocorrelation.length; m++) {
@@ -51,16 +55,15 @@ public class Autocorrelation implements Transformable {
             long localMaxIndex = findLocalMax(autocorrelation);
             int frequency = (int) (sampleRate / localMaxIndex);
 
-            System.out.println("Global maximum: " + autocorrelation[0]);
-            System.out.println("Frequency: " + frequency);
-
-
+            out.append("Frame ").append(counter).append(" has frequency - ").append(frequency).append(" Hz").append(newline);
+            out.append("Global maximum: ").append(autocorrelation[0]).append(newline);
             frequencies.add(frequency);
+            counter++;
         }
-        System.out.println("Autocorrelation has finished");
-        WavFile generatedSound = generateSound(chunkSize, numberOfFrames, sampleRate, name, frequencies);
-
-        return null;
+        out.append(newline).append("Average frequency - ").append(averageFrequency(frequencies)).append(" Hz").append(newline).append(newline);
+        generateAndSaveSound(chunkSize, numberOfFrames, sampleRate, name, frequencies);
+        out.append("Autocorrelation has finished");
+        return out;
     }
 
     private static long findLocalMax(long[] autocorrelation) {

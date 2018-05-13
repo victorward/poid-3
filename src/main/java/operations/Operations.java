@@ -7,17 +7,17 @@ import java.util.List;
 
 public class Operations {
     private List<Transformable> operations = new ArrayList<>();
-    private WavFile resultSound;
+    private StringBuilder results;
 
     public Operations() {
 
     }
 
-    public WavFile processSound(WavFile originSound) {
+    public StringBuilder processSound(WavFile originSound) {
         for (Transformable transformable : operations) {
-            resultSound = transformable.process(originSound);
+            results = transformable.process(originSound);
         }
-        return resultSound;
+        return results;
     }
 
     public void clear() {

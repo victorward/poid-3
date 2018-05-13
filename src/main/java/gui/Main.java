@@ -2,6 +2,7 @@ package gui;
 
 import model.WavFile;
 import operations.Autocorrelation;
+import operations.Cepstrum;
 import operations.Operations;
 import operations.Transformable;
 
@@ -13,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import static operations.Transformable.newline;
+
 public class Main extends JFrame implements ActionListener {
     // paths section
     private JLabel originalSoundPathTextLabel;
@@ -23,9 +26,11 @@ public class Main extends JFrame implements ActionListener {
     private JLabel chunkSizeLabel;
 
     private JButton startAutocorrelation;
+    private JButton startCepstrum;
 
     private Operations operations;
     private WavFile sourceFile;
+    private JTextPane resultsPane;
 
     private File selectedFile;
 
@@ -78,10 +83,19 @@ public class Main extends JFrame implements ActionListener {
         getContentPane().add(chunkSizeTextField);
 
 
-        startAutocorrelation = new JButton("Autocorrelation!");
+        startAutocorrelation = new JButton("Autocorrelation");
         startAutocorrelation.setBounds(10, 140, 130, 60);
         getContentPane().add(startAutocorrelation);
         startAutocorrelation.addActionListener(this);
+
+        startCepstrum = new JButton("Cepstrum");
+        startCepstrum.setBounds(150, 140, 130, 60);
+        getContentPane().add(startCepstrum);
+        startCepstrum.addActionListener(this);
+
+        resultsPane = new JTextPane();
+        resultsPane.setBounds(300, 45, 300, 300);
+        getContentPane().add(resultsPane);
 
     }
 
@@ -101,11 +115,21 @@ public class Main extends JFrame implements ActionListener {
                 reload();
             }
         } else if (e.getSource() == startAutocorrelation) {
+            resultsPane.setText("Starting autocorrelation" + newline);
             operations.clear();
-            Transformable transformable = new Autocorrelation();
-            transformable.setChunkSize(Integer.parseInt(chunkSizeTextField.getText()));
-            operations.addOperation(transformable);
-            operations.processSound(sourceFile);
+            Transformable autocorrelation = new Autocorrelation();
+            autocorrelation.setChunkSize(Integer.parseInt(chunkSizeTextField.getText()));
+            operations.addOperation(autocorrelation);
+            StringBuilder builder = operations.processSound(sourceFile);
+            resultsPane.setText(resultsPane.getText() + builder.toString());
+        } else if (e.getSource() == startCepstrum) {
+            resultsPane.setText("Starting cepstrum analysis" + newline);
+            operations.clear();
+            Transformable cepstrum = new Cepstrum();
+            cepstrum.setChunkSize(Integer.parseInt(chunkSizeTextField.getText()));
+            operations.addOperation(cepstrum);
+            StringBuilder builder = operations.processSound(sourceFile);
+            resultsPane.setText(resultsPane.getText() + builder.toString());
         }
     }
 
