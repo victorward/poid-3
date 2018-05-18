@@ -40,6 +40,15 @@ public class Autocorrelation implements Transformable {
 
         out.append("Frames count - ").append(parts.length).append(newline).append(newline);
 
+        simpleAutocorelation(parts, sampleRate, out, frequencies);
+
+        out.append(newline).append("Average frequency - ").append(averageFrequency(frequencies)).append(" Hz").append(newline).append(newline);
+        generateAndSaveSound(chunkSize, numberOfFrames, sampleRate, name, frequencies);
+        out.append("Autocorrelation has finished");
+        return out;
+    }
+
+    private void simpleAutocorelation(int[][] parts, int sampleRate, StringBuilder out, List<Integer> frequencies) {
         int counter = 0;
         for (int[] buffer : parts) {
             long[] autocorrelation = new long[chunkSize];
@@ -60,10 +69,6 @@ public class Autocorrelation implements Transformable {
             frequencies.add(frequency);
             counter++;
         }
-        out.append(newline).append("Average frequency - ").append(averageFrequency(frequencies)).append(" Hz").append(newline).append(newline);
-        generateAndSaveSound(chunkSize, numberOfFrames, sampleRate, name, frequencies);
-        out.append("Autocorrelation has finished");
-        return out;
     }
 
     private static long findLocalMax(long[] autocorrelation) {
@@ -93,7 +98,8 @@ public class Autocorrelation implements Transformable {
             }
         }
 
-        return Integer.MAX_VALUE;
+        return localMaxIndex;
+//        return Integer.MAX_VALUE;
     }
 
     @Override

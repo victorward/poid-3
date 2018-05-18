@@ -17,13 +17,10 @@ import java.io.File;
 import static operations.Transformable.newline;
 
 public class Main extends JFrame implements ActionListener {
-    // paths section
-    private JLabel originalSoundPathTextLabel;
     private JTextField originalSoundPathTextInput;
     private JButton originalSoundFileChooserButton;
 
     private JTextField chunkSizeTextField;
-    private JLabel chunkSizeLabel;
 
     private JButton startAutocorrelation;
     private JButton startCepstrum;
@@ -56,7 +53,8 @@ public class Main extends JFrame implements ActionListener {
     }
 
     private void initializeGraphicComponents() {
-        originalSoundPathTextLabel = new JLabel("Original sound path");
+        // paths section
+        JLabel originalSoundPathTextLabel = new JLabel("Original sound path");
         originalSoundPathTextLabel.setBounds(10, 15, 120, 17);
         getContentPane().add(originalSoundPathTextLabel);
 
@@ -72,7 +70,7 @@ public class Main extends JFrame implements ActionListener {
         originalSoundFileChooserButton.addActionListener(this);
 
 
-        chunkSizeLabel = new JLabel("Chunk size");
+        JLabel chunkSizeLabel = new JLabel("Chunk size");
         chunkSizeLabel.setBounds(10, 96, 90, 30);
         getContentPane().add(chunkSizeLabel);
 
