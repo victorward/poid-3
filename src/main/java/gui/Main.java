@@ -77,7 +77,7 @@ public class Main extends JFrame implements ActionListener {
         chunkSizeTextField = new JTextField();
         chunkSizeTextField.setColumns(10);
         chunkSizeTextField.setBounds(80, 100, 92, 27);
-        chunkSizeTextField.setText("44100");
+        chunkSizeTextField.setText("2000");
         getContentPane().add(chunkSizeTextField);
 
 

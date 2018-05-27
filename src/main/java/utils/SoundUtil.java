@@ -72,9 +72,10 @@ public class SoundUtil {
                 } else {
                     int bufSize = chunkSize * curSoundLength;
                     double[] buffer = new double[bufSize];
-                    double L1 = (double) sampleRate / prevFreq;
+                    double period = (double) sampleRate / prevFreq;
                     for (int j = 0; j < bufSize; j++) {
-                        buffer[j] = Math.sin(2 * Math.PI * j / L1);
+                        double angle = 2 * Math.PI * j / period;
+                        buffer[j] = Math.sin(angle);
                     }
                     wavFile.writeFrames(buffer, bufSize);
 
@@ -86,4 +87,36 @@ public class SoundUtil {
 
         return wavFile;
     }
+
+//    private static double pi2 = 2.0 * Math.PI;
+//    private static WavFile saveSound(List<Integer> frequencies, String name, int totalFrames, int sampleRate, int chunkSize) throws Exception {
+//        WavFile wavFile = WavFile.newWavFile(new File("src/main/resources/results/transformed_" + name), 1, (totalFrames / chunkSize) * chunkSize, 16, sampleRate);
+//
+//        double prevFreq = 0;
+//        int curSoundLength = 1;
+//        for (int i = 0; i < frequencies.size(); i++) {
+//            int frequency = frequencies.get(i);
+//            if (prevFreq == 0) {
+//                prevFreq = frequency;
+//            } else {
+//                if (frequency == 0 && i != frequencies.size() - 1) {
+//                    curSoundLength++;
+//                } else {
+//                    int bufSize = chunkSize * curSoundLength;
+//                    double[] buffer = new double[bufSize];
+//                    double sini = (prevFreq * (float) sampleRate) / (pi2 * frequency) + 1;
+//                    for (int s = 0; s < chunkSize; s++, sini += 1.0) {
+//                        buffer[s] = Math.sin(pi2 * frequency * sini / (float) sampleRate);
+//                        prevFreq = pi2 * frequency * sini / (float) sampleRate;
+//                    }
+//                    wavFile.writeFrames(buffer, bufSize);
+//
+//                    curSoundLength = 1;
+//                    prevFreq = frequency;
+//                }
+//            }
+//        }
+//
+//        return wavFile;
+//    }
 }
