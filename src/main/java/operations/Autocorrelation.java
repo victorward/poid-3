@@ -1,6 +1,8 @@
 package operations;
 
+import model.Chart;
 import model.WavFile;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +42,7 @@ public class Autocorrelation implements Transformable {
 
         out.append("Frames count - ").append(parts.length).append(newline).append(newline);
 
-        simpleAutocorelation(parts, sampleRate, out, frequencies);
+        simpleAutocorelation(parts, sampleRate, out, frequencies, name);
 
         out.append(newline).append("Average frequency - ").append(averageFrequency(frequencies)).append(" Hz").append(newline).append(newline);
         generateAndSaveSound(chunkSize, numberOfFrames, sampleRate, name, frequencies);
@@ -48,8 +50,9 @@ public class Autocorrelation implements Transformable {
         return out;
     }
 
-    private void simpleAutocorelation(int[][] parts, int sampleRate, StringBuilder out, List<Integer> frequencies) {
+    private void simpleAutocorelation(int[][] parts, int sampleRate, StringBuilder out, List<Integer> frequencies, String name) {
         int counter = 0;
+        long[] allAutocorelations = new long[0];
         for (int[] buffer : parts) {
             long[] autocorrelation = new long[chunkSize];
 
@@ -60,7 +63,11 @@ public class Autocorrelation implements Transformable {
                 }
                 autocorrelation[m - 1] = sum;
             }
-
+            if (counter == 0) {
+                allAutocorelations = autocorrelation;
+            } else {
+                allAutocorelations = ArrayUtils.addAll(allAutocorelations, autocorrelation);
+            }
             long localMaxIndex = findLocalMax(autocorrelation);
             int frequency = (int) (sampleRate / localMaxIndex);
 
@@ -69,6 +76,7 @@ public class Autocorrelation implements Transformable {
             frequencies.add(frequency);
             counter++;
         }
+        new Chart(allAutocorelations, name, "autocorelation");
     }
 
     private static long findLocalMax(long[] autocorrelation) {

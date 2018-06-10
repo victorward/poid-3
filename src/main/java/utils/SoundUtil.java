@@ -71,11 +71,13 @@ public class SoundUtil {
                     curSoundLength++;
                 } else {
                     int bufSize = chunkSize * curSoundLength;
+                    double amplitude = 0.9;
+                    double newFrequency = findClosestMatchingFrequency(prevFreq, chunkSize, sampleRate);
                     double[] buffer = new double[bufSize];
-                    double period = (double) sampleRate / prevFreq;
+                    double period = (double) sampleRate / newFrequency;
                     for (int j = 0; j < bufSize; j++) {
                         double angle = 2 * Math.PI * j / period;
-                        buffer[j] = Math.sin(angle);
+                        buffer[j] = Math.sin(angle) * amplitude;
                     }
                     wavFile.writeFrames(buffer, bufSize);
 
@@ -88,11 +90,21 @@ public class SoundUtil {
         return wavFile;
     }
 
-//    private static double pi2 = 2.0 * Math.PI;
+    private static double findClosestMatchingFrequency(int frequency, int windowSize, long samplingRate) {
+        double matchingFrequency = Double.MAX_VALUE;
+        for (int i = 0; i < windowSize; i++) {
+            double currentFrequency = i * (1.0 * samplingRate / windowSize);
+            if (Math.abs(currentFrequency - frequency) < Math.abs(matchingFrequency - frequency)) {
+                matchingFrequency = currentFrequency;
+            }
+        }
+        return matchingFrequency;
+    }
+
 //    private static WavFile saveSound(List<Integer> frequencies, String name, int totalFrames, int sampleRate, int chunkSize) throws Exception {
-//        WavFile wavFile = WavFile.newWavFile(new File("src/main/resources/results/transformed_" + name), 1, (totalFrames / chunkSize) * chunkSize, 16, sampleRate);
+//        WavFile wavFile = WavFile.newWavFile(new File("src/main/resources/results/transformed_" + name), 1, totalFrames, 8, sampleRate);
 //
-//        double prevFreq = 0;
+//        int prevFreq = 0;
 //        int curSoundLength = 1;
 //        for (int i = 0; i < frequencies.size(); i++) {
 //            int frequency = frequencies.get(i);
@@ -104,10 +116,10 @@ public class SoundUtil {
 //                } else {
 //                    int bufSize = chunkSize * curSoundLength;
 //                    double[] buffer = new double[bufSize];
-//                    double sini = (prevFreq * (float) sampleRate) / (pi2 * frequency) + 1;
-//                    for (int s = 0; s < chunkSize; s++, sini += 1.0) {
-//                        buffer[s] = Math.sin(pi2 * frequency * sini / (float) sampleRate);
-//                        prevFreq = pi2 * frequency * sini / (float) sampleRate;
+//                    double period = (double) sampleRate / prevFreq;
+//                    for (int j = 0; j < bufSize; j++) {
+//                        double angle = 2 * Math.PI * j / period;
+//                        buffer[j] = Math.sin(angle);
 //                    }
 //                    wavFile.writeFrames(buffer, bufSize);
 //

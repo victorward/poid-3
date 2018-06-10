@@ -15,4 +15,5 @@ dependencies {
     compile group: 'com.jgoodies', name: 'jgoodies-common', version: '1.8.1'
     compile group: 'com.jgoodies', name: 'jgoodies-looks', version: '2.5.3'
     compile group: 'jfree', name: 'jfreechart', version: '1.0.13'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 }
